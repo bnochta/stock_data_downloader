@@ -1,5 +1,6 @@
 import pandas as pd
 import yfinance as yf
+import matplotlib.pyplot as plot
 
 
 def download_data(ticker: str, start: str, end: str):
@@ -9,9 +10,10 @@ def download_data(ticker: str, start: str, end: str):
 
 def clean_data(data: pd.DataFrame, ticker: str):
     """Basic data cleaning steps, inserts ticker as column."""
-    data.columns = data.columns.get_level_values(0)
-    clean_data = data.dropna()
+    data.columns = raw_data.columns.get_level_values(0)
+    clean_data = raw_data.dropna()
     clean_data.index = pd.to_datetime(data.index)
+    clean_data = clean_data.reset_index()
     clean_data.insert(0,"Ticker", ticker)
     return clean_data
 
@@ -29,3 +31,6 @@ end = input("End date (YYYY-MM-DD):")
 raw_data = download_data(ticker, start, end)
 clean_data = clean_data(raw_data, ticker)
 save_data(clean_data, ticker, start, end)
+
+from visualizer import plot_close_price
+plot_close_price(clean_data, ticker)
